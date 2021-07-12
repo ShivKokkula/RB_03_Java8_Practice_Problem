@@ -1,22 +1,52 @@
 import java.util.*;
 
 public class AddressBookMain {
-    static Scanner input=new Scanner(System.in);
+    static Scanner input = new Scanner(System.in);
     static List<Contacts> contactsList = new ArrayList<>();
-    private static Map<String, Contacts[]> books =  new HashMap<String, Contacts[]>();
+    private static HashMap<String, List<Contacts>> books =  new HashMap<String, List<Contacts>>();
+    static String addressBookName;
     public static void main(String[] args) {
         System.out.println("Welcome to Address Book System");
 
         while(true) {
-            Menu();
-            System.out.println("Enter your selection");
-            int selection = input.nextInt();
-            if(selection < 1 || selection > 6) {
+            AddressBookMenu();
+            int selectionAddressBook = input.nextInt();
+            if(selectionAddressBook < 1 || selectionAddressBook > 3) {
                 System.out.println("Please enter the number in the menu");
                 continue;
             }
 
-            switch (selection){
+            switch (selectionAddressBook){
+                case 1:
+                    createAddressBook();
+                    break;
+                case 2:
+                    contacts();
+                    break;
+                case 3:
+                    exit();
+                    break;
+                default:
+                    System.out.println("Invalid selection");
+            }
+        }
+    }
+
+    private static void createAddressBook() {
+        addressBookName = getAddressBookName();
+    }
+
+    private static void contacts() {
+        while(true) {
+            Menu();
+            System.out.println("Enter your selection");
+            int selection = input.nextInt();
+            if (selection < 1 || selection > 6) {
+                System.out.println("Please enter the number in the menu");
+                continue;
+            }
+
+            switch (selection) {
                 case 1:
                     add();
                     break;
@@ -33,13 +63,20 @@ public class AddressBookMain {
                     showAll();
                     break;
                 case 6:
-                    exit();
+                    AddressBookMenu();
                     break;
                 default:
                     System.out.println("Invalid selection");
             }
-
         }
+    }
+
+    private static void AddressBookMenu() {
+        System.out.println("------------------------------------------");
+        System.out.println("| 1. Address Book |");
+        System.out.println("| 2. Contacts |");
+        System.out.println("| 3. Exit |");
+        System.out.println("------------------------------------------");
     }
 
     public static void Menu() {
@@ -60,9 +97,15 @@ public class AddressBookMain {
 
     private static void showAll() {
         System.out.println("------Query all contacts------");
-        Iterator<Contacts> iterator = contactsList.iterator();
+        Iterator<String> iterator = books.keySet().iterator();
         while (iterator.hasNext()){
-            System.out.println(iterator.next());
+            String key = iterator.next();
+            List<Contacts> value = books.get(key);
+            System.out.println("key : " + key + " Value : " + value);
+            Iterator<Contacts> itr = contactsList.iterator();
+            while(itr.hasNext()){
+                System.out.println(itr.next());
+            }
         }
     }
 
@@ -149,6 +192,14 @@ public class AddressBookMain {
 
         contactsList.add(new Contacts(firstName, lastName, address, city, state, zipCode,
                 phoneNumber, email));
+        books.put(addressBookName,contactsList);
+        System.out.println(books.get(addressBookName).toString());
+    }
+
+    private static String getAddressBookName() {
+        System.out.println("Give a address book name");
+        String addressBookName = input.next();
+        return addressBookName;
     }
 
 }
